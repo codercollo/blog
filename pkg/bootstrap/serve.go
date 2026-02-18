@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"github.com/codercollo/blog/pkg/config"
+	"github.com/codercollo/blog/pkg/database"
 	"github.com/codercollo/blog/pkg/html"
 	"github.com/codercollo/blog/pkg/routing"
 	"github.com/codercollo/blog/pkg/static"
@@ -9,6 +10,8 @@ import (
 
 func Serve() {
 	config.Set()
+
+	database.Connect()
 
 	routing.Init()
 
