@@ -7,8 +7,8 @@ import (
 
 type Article struct {
 	gorm.Model
-	Title   string `gorm:"varchar:191"`
-	Content string `gorm:"text"`
+	Title   string `gorm:"type:varchar(191)"`
+	Content string `gorm:"type:text"`
 	UserID  uint
 	User    models.User
 }
