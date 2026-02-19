@@ -3,17 +3,17 @@ package controllers
 import (
 	"net/http"
 
-	ArticleRepository "github.com/codercollo/blog/internal/modules/article/repositories"
+	ArticleService "github.com/codercollo/blog/internal/modules/article/services"
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
-	articleRepository ArticleRepository.ArticleRepositoryInterface
+	articleService ArticleService.ArticleServiceInterface
 }
 
 func New() *Controller {
 	return &Controller{
-		articleRepository: ArticleRepository.New(),
+		articleService: ArticleService.New(),
 	}
 }
 
@@ -23,6 +23,7 @@ func (controller *Controller) Index(c *gin.Context) {
 	// })
 
 	c.JSON(http.StatusOK, gin.H{
-		"articles": controller.articleRepository.List(8),
+		"featured": controller.articleService.GetFeaturedArticles(),
+		"stories":  controller.articleService.GetStoriesArticles(),
 	})
 }
