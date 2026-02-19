@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	ArticleRepository "github.com/codercollo/blog/internal/modules/article/repositories"
 	ArticleResponse "github.com/codercollo/blog/internal/modules/article/responses"
 )
@@ -25,4 +27,18 @@ func (articleService *ArticleService) GetStoriesArticles() ArticleResponse.Artic
 	articles := articleService.articleRepository.List(4)
 
 	return ArticleResponse.ToArticles(articles)
+}
+
+func (articleService *ArticleService) Find(id int) (ArticleResponse.Article, error) {
+	var response ArticleResponse.Article
+
+	article := articleService.articleRepository.Find(id)
+
+	if article.ID == 0 {
+		return response, errors.New("article not found")
+
+	}
+
+	return ArticleResponse.ToArticle(article), nil
+
 }

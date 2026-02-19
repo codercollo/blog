@@ -1,0 +1,16 @@
+{{define "internal/templates/errors/html/500"}}
+
+{{template "internal/templates/layouts/html/head" .}}
+{{template "internal/templates/layouts/html/navbar" .}}
+{{template "internal/templates/layouts/html/header" .}}
+
+<div class="col-12">
+  <h1>{{.title}}</h1>
+  <p>{{.message}}</p>
+</div>
+
+{{template "internal/templates/layouts/html/footer" .}}
+
+{{template "internal/templates/layouts/html/foot" .}}
+
+{{ end }}
