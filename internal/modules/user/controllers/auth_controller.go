@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/codercollo/blog/internal/modules/user/requests/auth"
 	UserService "github.com/codercollo/blog/internal/modules/user/services"
@@ -32,6 +33,7 @@ func (controller *Controller) Register(c *gin.Context) {
 
 func (controller *Controller) HandleRegister(c *gin.Context) {
 	var request auth.RegisterRequest
+
 	if err := c.ShouldBind(&request); err != nil {
 		errors.Init()
 		errors.SetFromErrors(err)
@@ -39,16 +41,33 @@ func (controller *Controller) HandleRegister(c *gin.Context) {
 
 		old.Init()
 		old.Set(c)
-		sessions.Set(c, "old", converters.UrlValuesToString(old.Get() ))
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
 
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}
+
+	if controller.userService.CheckUserExists(request.Email) {
+		errors.Init()
+		errors.Add("Email", "Email address already exists")
+		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
+
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
+
+		c.Redirect(http.StatusFound, "/register")
+		return
+
+	}
+
 	user, err := controller.userService.Create(request)
 	if err != nil {
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}
+
+	sessions.Set(c, "auth", strconv.Itoa(int(user.ID)))
 	log.Printf("The user created successfully with a name %s \n", user.Name)
 	c.Redirect(http.StatusFound, "/")
 }
