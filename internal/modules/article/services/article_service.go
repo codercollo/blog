@@ -1,8 +1,8 @@
 package services
 
 import (
-	ArticleModel "github.com/codercollo/blog/internal/modules/article/models"
 	ArticleRepository "github.com/codercollo/blog/internal/modules/article/repositories"
+	ArticleResponse "github.com/codercollo/blog/internal/modules/article/responses"
 )
 
 type ArticleService struct {
@@ -15,10 +15,14 @@ func New() *ArticleService {
 	}
 }
 
-func (articleService *ArticleService) GetFeaturedArticles() []ArticleModel.Article {
-	return articleService.articleRepository.List(4)
+func (articleService *ArticleService) GetFeaturedArticles() ArticleResponse.Articles {
+	articles := articleService.articleRepository.List(4)
+
+	return ArticleResponse.ToArticles(articles)
 }
 
-func (articleService *ArticleService) GetStoriesArticles() []ArticleModel.Article {
-	return articleService.articleRepository.List(6)
+func (articleService *ArticleService) GetStoriesArticles() ArticleResponse.Articles {
+	articles := articleService.articleRepository.List(4)
+
+	return ArticleResponse.ToArticles(articles)
 }

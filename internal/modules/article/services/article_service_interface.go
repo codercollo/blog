@@ -1,10 +1,10 @@
 package services
 
 import (
-	ArticleModel "github.com/codercollo/blog/internal/modules/article/models"
+	ArticleResponse "github.com/codercollo/blog/internal/modules/article/responses"
 )
 
 type ArticleServiceInterface interface {
-	GetFeaturedArticles() []ArticleModel.Article
-	GetStoriesArticles() []ArticleModel.Article
+	GetFeaturedArticles() ArticleResponse.Articles
+	GetStoriesArticles() ArticleResponse.Articles
 }

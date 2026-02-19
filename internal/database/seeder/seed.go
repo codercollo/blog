@@ -27,7 +27,7 @@ func Seed() {
 	}
 	db.Create(&user)
 
-	log.Printf("User created successfully with email address %s \n", &user.Email)
+	log.Printf("User created successfully with email address %d \n", &user.Email)
 
 	for i := 1; i <= 10; i++ {
 		article := articleModel.Article{
