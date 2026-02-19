@@ -14,7 +14,7 @@
       <p>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" placeholder="Name" value="" />
-        <span class="text-danger"></span>
+        <span class="text-danger">{{ .ERRORS.name}}</span>
       </p>
       <p>
         <label for="email">Email</label>
@@ -25,7 +25,7 @@
           placeholder="Email"
           value=""
         />
-        <span class="text-danger"></span>
+        <span class="text-danger"> {{ .ERRORS.email}}</span>
       </p>
       <p>
         <label for="password">Password</label>
@@ -35,7 +35,7 @@
           name="password"
           placeholder="Password"
         />
-        <span class="text-danger"></span>
+        <span class="text-danger">{{ .ERRORS.password}}</span>
       </p>
       <p><button type="submit">Register</button></p>
     </form>

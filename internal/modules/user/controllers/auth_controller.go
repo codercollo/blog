@@ -1,17 +1,26 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/codercollo/blog/internal/modules/user/requests/auth"
+	UserService "github.com/codercollo/blog/internal/modules/user/services"
+	"github.com/codercollo/blog/pkg/converters"
+	"github.com/codercollo/blog/pkg/errors"
 	"github.com/codercollo/blog/pkg/html"
+	"github.com/codercollo/blog/pkg/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
+	userService UserService.UserServiceInterface
 }
 
 func New() *Controller {
-	return &Controller{}
+	return &Controller{
+		userService: UserService.New(),
+	}
 }
 
 func (controller *Controller) Register(c *gin.Context) {
@@ -21,5 +30,19 @@ func (controller *Controller) Register(c *gin.Context) {
 }
 
 func (controller *Controller) HandleRegister(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Register done"})
+	var request auth.RegisterRequest
+	if err := c.ShouldBind(&request); err != nil {
+		errors.Init()
+		errors.SetFromErrors(err)
+		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
+		c.Redirect(http.StatusFound, "/register")
+		return
+	}
+	user, err := controller.userService.Create(request)
+	if err != nil {
+		c.Redirect(http.StatusFound, "/register")
+		return
+	}
+	log.Printf("The user created successfully with a name %s \n", user.Name)
+	c.Redirect(http.StatusFound, "/")
 }
