@@ -9,6 +9,7 @@ import (
 	"github.com/codercollo/blog/pkg/converters"
 	"github.com/codercollo/blog/pkg/errors"
 	"github.com/codercollo/blog/pkg/html"
+	"github.com/codercollo/blog/pkg/old"
 	"github.com/codercollo/blog/pkg/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -35,6 +36,11 @@ func (controller *Controller) HandleRegister(c *gin.Context) {
 		errors.Init()
 		errors.SetFromErrors(err)
 		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
+
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get() ))
+
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}

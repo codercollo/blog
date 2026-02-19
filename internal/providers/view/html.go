@@ -10,5 +10,6 @@ import (
 func WithGlobalData(c *gin.Context, data gin.H) gin.H {
 	data["APP_DATA"] = viper.Get("App.Name")
 	data["ERRORS"] = converters.StringToMap(sessions.Flash(c, "errors"))
+	data["OLD"] = converters.StringToUrlValue(sessions.Flash(c, "old"))
 	return data
 }
