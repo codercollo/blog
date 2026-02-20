@@ -80,14 +80,43 @@ func (controller *Controller) Login(c *gin.Context) {
 }
 
 func (controller *Controller) HandleLogin(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "You are logged in"})
-	//Unmarshal the payload
+	//validate the request
+	var request auth.LoginRequest
 
-	//Validate it
+	if err := c.ShouldBind(&request); err != nil {
+		errors.Init()
+		errors.SetFromErrors(err)
+		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
 
-	//check db for user
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
 
-	//Assign session
+		c.Redirect(http.StatusFound, "/register")
+		return
+	}
 
-	//login user
+	user, err := controller.userService.HandleUserLogin(request)
+	if err != nil {
+		errors.Init()
+		errors.Add("email", err.Error())
+		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
+
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
+
+		c.Redirect(http.StatusFound, "/register")
+		return
+	}
+
+	sessions.Set(c, "auth", strconv.Itoa(int(user.ID)))
+
+	log.Printf("The user logged in successfully with a name %s \n", user.Name)
+	c.Redirect(http.StatusFound, "/")
+}
+
+func (controller *Controller) HandleLogout(c *gin.Context) {
+	sessions.Remove(c, "auth")
+	c.Redirect(http.StatusFound, "/")
 }

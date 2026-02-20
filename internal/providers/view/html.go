@@ -1,6 +1,7 @@
 package view
 
 import (
+	"github.com/codercollo/blog/internal/modules/user/helpers"
 	"github.com/codercollo/blog/pkg/converters"
 	"github.com/codercollo/blog/pkg/sessions"
 	"github.com/gin-gonic/gin"
@@ -11,5 +12,7 @@ func WithGlobalData(c *gin.Context, data gin.H) gin.H {
 	data["APP_DATA"] = viper.Get("App.Name")
 	data["ERRORS"] = converters.StringToMap(sessions.Flash(c, "errors"))
 	data["OLD"] = converters.StringToUrlValue(sessions.Flash(c, "old"))
+	data["AUTH"] = helpers.Auth(c)
+
 	return data
 }
