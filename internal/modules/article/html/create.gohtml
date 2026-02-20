@@ -1,0 +1,42 @@
+{{define "internal/modules/article/html/create"}}
+{{template "internal/templates/layouts/html/head" .}}
+{{template "internal/templates/layouts/html/navbar" .}}
+{{template "internal/templates/layouts/html/header" .}}
+
+<div class="col-md-12 col-xs-12">
+  <form class="article-form-container" action="/articles/store" method="POST">
+    <div class="form-group">
+      <label class="h4 form-control-label" for="title">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        name="title"
+        id="title"
+        placeholder="Title"
+        required=""
+        value="{{ index .OLD "title" }}"
+      />
+      <span class="text-danger">{{ index .ERRORS "title" }}</span>
+    </div>
+
+    <div class="form-group">
+      <label class="h4 form-control-label" for="content">Content</label>
+      <textarea
+        class="form-control"
+        name="content"
+        id="content"
+        placeholder="Content"
+        required=""
+        rows="10">{{ index .OLD "content" }}</textarea>
+      <span class="text-danger">{{ index .ERRORS "content" }}</span>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+
+{{template "internal/templates/layouts/html/footer" .}}
+{{template "internal/templates/layouts/html/foot" .}}
+{{end}}

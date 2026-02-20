@@ -46,7 +46,11 @@ func (controller *Controller) Show(c *gin.Context) {
 }
 
 func (controller *Controller) Create(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello world",
-	})
+     html.Render(c, http.StatusOK, "internal/modules/article/html/create", gin.H{
+			"title": "Create article",
+		 })
+}
+
+func (controller *Controller) Store(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Article created .."})
 }
