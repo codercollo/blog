@@ -1,12 +1,18 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/codercollo/blog/internal/modules/article/requests/articles" // ✅ correct request
 	ArticleService "github.com/codercollo/blog/internal/modules/article/services"
+	"github.com/codercollo/blog/internal/modules/user/helpers"
+	"github.com/codercollo/blog/pkg/converters"
+	"github.com/codercollo/blog/pkg/errors"
 	"github.com/codercollo/blog/pkg/html"
-
+	"github.com/codercollo/blog/pkg/old"
+	"github.com/codercollo/blog/pkg/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,11 +52,31 @@ func (controller *Controller) Show(c *gin.Context) {
 }
 
 func (controller *Controller) Create(c *gin.Context) {
-     html.Render(c, http.StatusOK, "internal/modules/article/html/create", gin.H{
-			"title": "Create article",
-		 })
+	html.Render(c, http.StatusOK, "internal/modules/article/html/create", gin.H{
+		"title": "Create article",
+	})
 }
 
 func (controller *Controller) Store(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Article created .."})
+	var request articles.StoreRequest // ✅ was auth.RegisterRequest
+	if err := c.ShouldBind(&request); err != nil {
+		errors.Init()
+		errors.SetFromErrors(err)
+		sessions.Set(c, "errors", converters.MapToString(errors.Get()))
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
+		c.Redirect(http.StatusFound, "/articles/create")
+		return
+	}
+
+	user := helpers.Auth(c) // returns responses.User
+
+	article, err := controller.articleService.StoreAsUser(request, user)
+	if err != nil {
+		c.Redirect(http.StatusFound, "/articles/create")
+		return
+	}
+
+	c.Redirect(http.StatusFound, fmt.Sprintf("/articles/%d", article.ID)) // ✅ fixed /article → /articles
 }
